@@ -15,6 +15,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -46,23 +49,33 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                Intent intent= new Intent(MainActivity.this, LoginActivity.class);
-
-                Pair[] pairs= new Pair[2];
-                pairs[0]=new Pair<View, String>(logoImageView,"logoImageTrans");
-                pairs[1]=new Pair<View, String>(antonRMTextView,"antonRMTextView");
+                //si el usuario ya inicio sesion se va hacia el userACtiviti y si no se manda al login
+                FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser(); //
+                    if (user!= null){
+                        Intent intent = new Intent(MainActivity.this, UserActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }else {//si no inicia sesion
+//(Animaciones)
+                        Intent intent= new Intent(MainActivity.this, LoginActivity.class);
+                        Pair[] pairs= new Pair[2];
+                        pairs[0]=new Pair<View, String>(logoImageView,"logoImageTrans");
+                        pairs[1]=new Pair<View, String>(antonRMTextView,"antonRMTextView");
 //si la version del jdk no soporta que se salte la animacion
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this,pairs);
-                    startActivity(intent, options.toBundle());
-                }else {
-                    startActivity(intent);
-                    finish();
-                }
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this,pairs);
+                            startActivity(intent, options.toBundle());
+                        }else {
+                            startActivity(intent);
+                            finish();
+                        }
 
-                startActivity(intent);
-                finish();
+                        startActivity(intent);
+                        finish();
+                    }
+
             }
+
         },4000);
         //fin bloque animacion ejecutar
     }
